@@ -1,3 +1,4 @@
+
 const DEFAULT_LANG = 'en'
 const SUPPORTED_LANG = {
     'en': {
@@ -91,83 +92,23 @@ window.addEventListener('DOMContentLoaded', function () {
     const $pwBtn = document.querySelector('.opt-pw')
     const $modeBtn = document.querySelector('.opt-mode > input')
     const $shareBtn = document.querySelector('.opt-share > input')
-    const $langSelect = document.querySelector('.opt-lang')
     const $previewPlain = document.querySelector('#preview-plain')
     const $previewMd = document.querySelector('#preview-md')
     const $shareModal = document.querySelector('.share-modal')
     const $closeBtn = document.querySelector('.share-modal .close-btn')
     const $copyBtn = document.querySelector('.share-modal .opt-button')
     const $shareInput = document.querySelector('.share-modal input')
-    const $highlight = document.getElementById('highlight-preview')
 
-    // Initialize CodeMirror
-    const editor = CodeMirror.fromTextArea($textarea, {
-        mode: 'plain',
-        theme: 'monokai',
-        lineNumbers: true,
-        lineWrapping: true,
-        autoCloseBrackets: true,
-        matchBrackets: true,
-        indentUnit: 4,
-        tabSize: 4,
-        indentWithTabs: false,
-        extraKeys: {
-            "Tab": "indentMore",
-            "Shift-Tab": "indentLess"
-        }
-    });
-
-    // Set editor height
-    editor.setSize(null, 'calc(100vh - 120px)');
-
-    // Map dropdown value to CodeMirror mode
-    const modeMap = {
-        plain: 'null',
-        javascript: 'javascript',
-        python: 'python',
-        java: 'text/x-java',
-        cpp: 'text/x-c++src',
-        csharp: 'text/x-csharp',
-        php: 'application/x-httpd-php',
-        ruby: 'ruby',
-        go: 'go',
-        rust: 'rust',
-    };
-
-    // Map dropdown value sang class ngôn ngữ của highlight.js
-    const langMap = {
-        plain: '',
-        javascript: 'language-javascript',
-        python: 'language-python',
-        java: 'language-java',
-        cpp: 'language-cpp',
-        csharp: 'language-csharp',
-        php: 'language-php',
-        ruby: 'language-ruby',
-        go: 'language-go',
-        rust: 'language-rust',
-    };
-
-    // Set initial mode based on dropdown value
-    if ($langSelect) {
-        const initialMode = modeMap[$langSelect.value] || 'null';
-        editor.setOption('mode', initialMode);
-        $langSelect.onchange = function() {
-            const mode = modeMap[this.value] || 'null';
-            editor.setOption('mode', mode);
-        }
-    }
-
-    renderPlain($previewPlain, editor.getValue())
-    renderMarkdown($previewMd, editor.getValue())
+    renderPlain($previewPlain, $textarea.value)
+    renderMarkdown($previewMd, $textarea.value)
 
     if ($textarea) {
-        editor.on('change', throttle(function () {
-            renderMarkdown($previewMd, editor.getValue())
+        $textarea.oninput = throttle(function () {
+            renderMarkdown($previewMd, $textarea.value)
 
             $loading.style.display = 'inline-block'
             const data = {
-                t: editor.getValue(),
+                t: $textarea.value,
             }
 
             window.fetch('', {
@@ -187,7 +128,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 .finally(() => {
                     $loading.style.display = 'none'
                 })
-        }, 1000))
+        }, 1000)
     }
 
     if ($pwBtn) {
@@ -289,34 +230,6 @@ window.addEventListener('DOMContentLoaded', function () {
                 $copyBtn.style.background = originColor
             }, 1500)
         }
-    }
-
-    function updateHighlight() {
-        if (!$highlight || !$textarea) return;
-        // Escape HTML để hiển thị đúng code
-        $highlight.textContent = $textarea.value;
-        // Đặt class ngôn ngữ
-        const langClass = langMap[$langSelect?.value] || '';
-        $highlight.className = 'hljs ' + langClass;
-        // Highlight lại
-        if (window.hljs) hljs.highlightElement($highlight);
-    }
-
-    // Sự kiện nhập liệu
-    if ($textarea) {
-        $textarea.addEventListener('input', updateHighlight);
-        // Đồng bộ scroll
-        $textarea.addEventListener('scroll', function() {
-            $highlight.scrollTop = $textarea.scrollTop;
-            $highlight.scrollLeft = $textarea.scrollLeft;
-        });
-        // Khởi tạo lần đầu
-        updateHighlight();
-    }
-
-    // Sự kiện đổi ngôn ngữ
-    if ($langSelect) {
-        $langSelect.addEventListener('change', updateHighlight);
     }
 
 })
