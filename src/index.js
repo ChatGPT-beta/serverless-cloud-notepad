@@ -182,14 +182,14 @@ router.post('/:path', async request => {
 
     const formData = await request.formData();
     const content = formData.get('t')
-    const language = formData.get('lang') || 'text'
+
+    // const { metadata } = await queryNote(path)
 
     try {
         await NOTES.put(path, content, {
             metadata: {
                 ...metadata,
                 updateAt: dayjs().unix(),
-                language: language,
             },
         })
 
