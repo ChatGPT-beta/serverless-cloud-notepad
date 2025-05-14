@@ -1,4 +1,3 @@
-
 const DEFAULT_LANG = 'en'
 const SUPPORTED_LANG = {
     'en': {
@@ -98,18 +97,59 @@ window.addEventListener('DOMContentLoaded', function () {
     const $closeBtn = document.querySelector('.share-modal .close-btn')
     const $copyBtn = document.querySelector('.share-modal .opt-button')
     const $shareInput = document.querySelector('.share-modal input')
+    const $languageSelect = document.querySelector('#language-select')
+
+    let editor = null
 
     renderPlain($previewPlain, $textarea.value)
     renderMarkdown($previewMd, $textarea.value)
 
     if ($textarea) {
-        $textarea.oninput = throttle(function () {
-            renderMarkdown($previewMd, $textarea.value)
-
-            $loading.style.display = 'inline-block'
-            const data = {
-                t: $textarea.value,
+        // Initialize CodeMirror
+        editor = CodeMirror.fromTextArea($textarea, {
+            mode: 'text',
+            theme: 'monokai',
+            lineNumbers: true,
+            lineWrapping: true,
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            indentUnit: 4,
+            tabSize: 4,
+            indentWithTabs: false,
+            extraKeys: {
+                "Tab": function(cm) {
+                    if (cm.somethingSelected()) {
+                        cm.indentSelection("add");
+                    } else {
+                        cm.replaceSelection("    ", "end");
+                    }
+                }
             }
+        });
+
+        // Handle language change
+        if ($languageSelect) {
+            $languageSelect.addEventListener('change', function() {
+                const mode = this.value;
+                editor.setOption('mode', mode);
+            });
+
+            // Set initial language mode from metadata
+            const initialMode = $languageSelect.getAttribute('data-initial-mode') || 'text';
+            $languageSelect.value = initialMode;
+            editor.setOption('mode', initialMode);
+        }
+
+        // Handle content changes
+        editor.on('change', throttle(function() {
+            const content = editor.getValue();
+            renderMarkdown($previewMd, content);
+
+            $loading.style.display = 'inline-block';
+            const data = {
+                t: content,
+                lang: $languageSelect ? $languageSelect.value : 'text'
+            };
 
             window.fetch('', {
                 method: 'POST',
@@ -121,14 +161,14 @@ window.addEventListener('DOMContentLoaded', function () {
                 .then(res => res.json())
                 .then(res => {
                     if (res.err !== 0) {
-                        errHandle(res.msg)
+                        errHandle(res.msg);
                     }
                 })
                 .catch(err => errHandle(err))
                 .finally(() => {
-                    $loading.style.display = 'none'
-                })
-        }, 1000)
+                    $loading.style.display = 'none';
+                });
+        }, 1000));
     }
 
     if ($pwBtn) {
