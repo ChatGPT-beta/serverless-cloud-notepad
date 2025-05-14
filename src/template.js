@@ -11,39 +11,25 @@ const SWITCHER = (text, open, className = '') => `
   <span class="slider round"></span>
 </label>
 `
-
-const LANGUAGES = [
-  { value: 'plaintext', label: 'Plain Text' },
-  { value: 'javascript', label: 'JavaScript' },
-  { value: 'python', label: 'Python' },
-  { value: 'java', label: 'Java' },
-  { value: 'c', label: 'C' },
-  { value: 'cpp', label: 'C++' },
-  { value: 'go', label: 'Go' },
-  { value: 'php', label: 'PHP' },
-  { value: 'ruby', label: 'Ruby' },
-  { value: 'typescript', label: 'TypeScript' },
-  { value: 'json', label: 'JSON' },
-  { value: 'html', label: 'HTML' },
-  { value: 'css', label: 'CSS' },
-  { value: 'bash', label: 'Bash' },
-  { value: 'markdown', label: 'Markdown' },
-];
-
-const LANGUAGE_DROPDOWN = (selected = 'plaintext') => `
-<select id="language-select" class="opt-button" style="margin-left:8px;">
-  ${LANGUAGES.map(lang => `<option value="${lang.value}" ${lang.value === selected ? 'selected' : ''}>${lang.label}</option>`).join('')}
-</select>
-`;
-
-const FOOTER = ({ lang, isEdit, updateAt, pw, mode, share, codeLang }) => `
+const FOOTER = ({ lang, isEdit, updateAt, pw, mode, share }) => `
     <div class="footer">
         ${isEdit ? `
             <div class="opt">
                 <button class="opt-button opt-pw">${pw ? SUPPORTED_LANG[lang].changePW : SUPPORTED_LANG[lang].setPW}</button>
+                <select class="opt-button opt-lang">
+                    <option value="plain">Plain Text</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="java">Java</option>
+                    <option value="cpp">C++</option>
+                    <option value="csharp">C#</option>
+                    <option value="php">PHP</option>
+                    <option value="ruby">Ruby</option>
+                    <option value="go">Go</option>
+                    <option value="rust">Rust</option>
+                </select>
                 ${SWITCHER('Markdown', mode === 'md', 'opt-mode')}
                 ${SWITCHER(SUPPORTED_LANG[lang].share, share, 'opt-share')}
-                ${LANGUAGE_DROPDOWN(codeLang)}
             </div>
             ` : ''
     }
@@ -75,7 +61,16 @@ const HTML = ({ lang, title, content, ext = {}, tips, isEdit, showPwPrompt }) =>
     <title>${title} — Cloud Notepad</title>
     <link href="${CDN_PREFIX}/favicon.ico" rel="shortcut icon" type="image/ico" />
     <link href="${CDN_PREFIX}/css/app.min.css" rel="stylesheet" media="screen" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/ruby/ruby.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/go/go.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/rust/rust.min.js"></script>
 </head>
 <body>
     <div class="note-container">
@@ -85,7 +80,6 @@ const HTML = ({ lang, title, content, ext = {}, tips, isEdit, showPwPrompt }) =>
                     <div class="layer_3">
                         ${tips ? `<div class="tips">${tips}</div>` : ''}
                         <textarea id="contents" class="contents ${isEdit ? '' : 'hide'}" spellcheck="true" placeholder="${SUPPORTED_LANG[lang].emptyPH}">${content}</textarea>
-                        <pre id="code-preview" class="contents" style="display:none;"><code class="hljs"></code></pre>
                         ${(isEdit && ext.mode === 'md') ? '<div class="divide-line"></div>' : ''}
                         ${tips || (isEdit && ext.mode !== 'md') ? '' : `<div id="preview-${ext.mode || 'plain'}" class="contents"></div>`}
                     </div>
@@ -96,26 +90,11 @@ const HTML = ({ lang, title, content, ext = {}, tips, isEdit, showPwPrompt }) =>
     <div id="loading"></div>
     ${MODAL(lang)}
     ${FOOTER({ ...ext, isEdit, lang })}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/java.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/c.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/cpp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/go.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/php.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/ruby.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/typescript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/json.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/xml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/bash.min.js"></script>
+    ${(ext.mode === 'md' || ext.share) ? `<script src="${CDN_PREFIX}/js/purify.min.js"></script>` : ''}
+    ${ext.mode === 'md' ? `<script src="${CDN_PREFIX}/js/marked.min.js"></script>` : ''}
     <script src="${CDN_PREFIX}/js/clip.min.js"></script>
     <script src="${CDN_PREFIX}/js/app.min.js"></script>
     ${showPwPrompt ? '<script>passwdPrompt()</script>' : ''}
-    <script>
-      // Highlight code preview logic sẽ được thêm ở app.js
-    </script>
 </body>
 </html>
 `
