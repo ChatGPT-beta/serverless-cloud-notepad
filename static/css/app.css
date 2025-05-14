@@ -198,20 +198,50 @@ textarea:focus {
 }
 
 .opt-button {
-    cursor: pointer;
-    padding: 4px 10px;
-    border-radius: 4px;
-    background: #3a86ff;
-    color: white;
+    margin-right: 10px;
+    padding: 0 10px;
+    height: 26px;
+    line-height: 26px;
     border: none;
+    border-radius: 4px;
+    background: #f0f0f0;
+    color: #666;
+    cursor: pointer;
+    font-size: 14px;
 }
 
 .opt-button:hover {
-    background: #3a86ffd4;
+    background: #e0e0e0;
 }
 
-.opt-button:active {
-    background: #3275df;
+.opt-lang {
+    margin-right: 10px;
+    padding: 0 10px;
+    height: 26px;
+    line-height: 26px;
+    border: none;
+    border-radius: 4px;
+    background: #f0f0f0;
+    color: #666;
+    cursor: pointer;
+    font-size: 14px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    padding-right: 30px;
+}
+
+.opt-lang:hover {
+    background-color: #e0e0e0;
+}
+
+.opt-lang:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
 }
 
 .opt-desc {
@@ -357,34 +387,4 @@ textarea:focus {
 
 .modal-body>input:hover {
     border-color: #3a86ffd4;
-}
-
-.language-select {
-    margin-bottom: 10px;
-    padding: 5px;
-    border: 1px solid #dcdde1;
-    border-radius: 4px;
-    background: #fff;
-    color: #3a3b3c;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.language-select:focus {
-    outline: none;
-    border-color: #3a86ff;
-}
-
-.CodeMirror {
-    height: calc(100vh - 180px);
-    font-family: Monaco, 'Courier New', monospace;
-    font-size: 14px;
-    line-height: 1.5;
-    border: none;
-    background: transparent;
-}
-
-.CodeMirror-gutters {
-    border: none;
-    background: transparent;
 }
