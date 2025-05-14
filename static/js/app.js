@@ -119,10 +119,26 @@ window.addEventListener('DOMContentLoaded', function () {
     // Set editor height
     editor.setSize(null, 'calc(100vh - 120px)');
 
-    // Handle language change
+    // Map dropdown value to CodeMirror mode
+    const modeMap = {
+        plain: 'null',
+        javascript: 'javascript',
+        python: 'python',
+        java: 'text/x-java',
+        cpp: 'text/x-c++src',
+        csharp: 'text/x-csharp',
+        php: 'application/x-httpd-php',
+        ruby: 'ruby',
+        go: 'go',
+        rust: 'rust',
+    };
+
+    // Set initial mode based on dropdown value
     if ($langSelect) {
+        const initialMode = modeMap[$langSelect.value] || 'null';
+        editor.setOption('mode', initialMode);
         $langSelect.onchange = function() {
-            const mode = this.value;
+            const mode = modeMap[this.value] || 'null';
             editor.setOption('mode', mode);
         }
     }
