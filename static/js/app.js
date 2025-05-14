@@ -91,65 +91,53 @@ window.addEventListener('DOMContentLoaded', function () {
     const $pwBtn = document.querySelector('.opt-pw')
     const $modeBtn = document.querySelector('.opt-mode > input')
     const $shareBtn = document.querySelector('.opt-share > input')
+    const $langSelect = document.querySelector('.opt-lang')
     const $previewPlain = document.querySelector('#preview-plain')
     const $previewMd = document.querySelector('#preview-md')
     const $shareModal = document.querySelector('.share-modal')
     const $closeBtn = document.querySelector('.share-modal .close-btn')
     const $copyBtn = document.querySelector('.share-modal .opt-button')
     const $shareInput = document.querySelector('.share-modal input')
-    const $languageSelect = document.querySelector('#language-select')
 
-    let editor = null
+    // Initialize CodeMirror
+    const editor = CodeMirror.fromTextArea($textarea, {
+        mode: 'plain',
+        theme: 'monokai',
+        lineNumbers: true,
+        lineWrapping: true,
+        autoCloseBrackets: true,
+        matchBrackets: true,
+        indentUnit: 4,
+        tabSize: 4,
+        indentWithTabs: false,
+        extraKeys: {
+            "Tab": "indentMore",
+            "Shift-Tab": "indentLess"
+        }
+    });
 
-    renderPlain($previewPlain, $textarea.value)
-    renderMarkdown($previewMd, $textarea.value)
+    // Set editor height
+    editor.setSize(null, 'calc(100vh - 120px)');
+
+    // Handle language change
+    if ($langSelect) {
+        $langSelect.onchange = function() {
+            const mode = this.value;
+            editor.setOption('mode', mode);
+        }
+    }
+
+    renderPlain($previewPlain, editor.getValue())
+    renderMarkdown($previewMd, editor.getValue())
 
     if ($textarea) {
-        // Initialize CodeMirror
-        editor = CodeMirror.fromTextArea($textarea, {
-            mode: 'text',
-            theme: 'monokai',
-            lineNumbers: true,
-            lineWrapping: true,
-            autoCloseBrackets: true,
-            matchBrackets: true,
-            indentUnit: 4,
-            tabSize: 4,
-            indentWithTabs: false,
-            extraKeys: {
-                "Tab": function(cm) {
-                    if (cm.somethingSelected()) {
-                        cm.indentSelection("add");
-                    } else {
-                        cm.replaceSelection("    ", "end");
-                    }
-                }
-            }
-        });
+        editor.on('change', throttle(function () {
+            renderMarkdown($previewMd, editor.getValue())
 
-        // Handle language change
-        if ($languageSelect) {
-            $languageSelect.addEventListener('change', function() {
-                const mode = this.value;
-                editor.setOption('mode', mode);
-            });
-
-            // Set initial language mode from metadata
-            const initialMode = $languageSelect.getAttribute('data-initial-mode') || 'text';
-            $languageSelect.value = initialMode;
-            editor.setOption('mode', initialMode);
-        }
-
-        // Handle content changes
-        editor.on('change', throttle(function() {
-            const content = editor.getValue();
-            renderMarkdown($previewMd, content);
-
-            $loading.style.display = 'inline-block';
+            $loading.style.display = 'inline-block'
             const data = {
-                t: content,
-                lang: $languageSelect ? $languageSelect.value : 'text'
-            };
+                t: editor.getValue(),
+            }
 
             window.fetch('', {
                 method: 'POST',
@@ -161,14 +149,14 @@ window.addEventListener('DOMContentLoaded', function () {
                 .then(res => res.json())
                 .then(res => {
                     if (res.err !== 0) {
-                        errHandle(res.msg);
+                        errHandle(res.msg)
                     }
                 })
                 .catch(err => errHandle(err))
                 .finally(() => {
-                    $loading.style.display = 'none';
-                });
-        }, 1000));
+                    $loading.style.display = 'none'
+                })
+        }, 1000))
     }
 
     if ($pwBtn) {
