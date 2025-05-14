@@ -98,6 +98,7 @@ window.addEventListener('DOMContentLoaded', function () {
     const $closeBtn = document.querySelector('.share-modal .close-btn')
     const $copyBtn = document.querySelector('.share-modal .opt-button')
     const $shareInput = document.querySelector('.share-modal input')
+    const $highlight = document.getElementById('highlight-preview')
 
     // Initialize CodeMirror
     const editor = CodeMirror.fromTextArea($textarea, {
@@ -131,6 +132,20 @@ window.addEventListener('DOMContentLoaded', function () {
         ruby: 'ruby',
         go: 'go',
         rust: 'rust',
+    };
+
+    // Map dropdown value sang class ngôn ngữ của highlight.js
+    const langMap = {
+        plain: '',
+        javascript: 'language-javascript',
+        python: 'language-python',
+        java: 'language-java',
+        cpp: 'language-cpp',
+        csharp: 'language-csharp',
+        php: 'language-php',
+        ruby: 'language-ruby',
+        go: 'language-go',
+        rust: 'language-rust',
     };
 
     // Set initial mode based on dropdown value
@@ -274,6 +289,34 @@ window.addEventListener('DOMContentLoaded', function () {
                 $copyBtn.style.background = originColor
             }, 1500)
         }
+    }
+
+    function updateHighlight() {
+        if (!$highlight || !$textarea) return;
+        // Escape HTML để hiển thị đúng code
+        $highlight.textContent = $textarea.value;
+        // Đặt class ngôn ngữ
+        const langClass = langMap[$langSelect?.value] || '';
+        $highlight.className = 'hljs ' + langClass;
+        // Highlight lại
+        if (window.hljs) hljs.highlightElement($highlight);
+    }
+
+    // Sự kiện nhập liệu
+    if ($textarea) {
+        $textarea.addEventListener('input', updateHighlight);
+        // Đồng bộ scroll
+        $textarea.addEventListener('scroll', function() {
+            $highlight.scrollTop = $textarea.scrollTop;
+            $highlight.scrollLeft = $textarea.scrollLeft;
+        });
+        // Khởi tạo lần đầu
+        updateHighlight();
+    }
+
+    // Sự kiện đổi ngôn ngữ
+    if ($langSelect) {
+        $langSelect.addEventListener('change', updateHighlight);
     }
 
 })
