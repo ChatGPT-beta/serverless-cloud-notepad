@@ -24,7 +24,6 @@ const FOOTER = ({ lang, isEdit, updateAt, pw, mode, share }) => `
                     <option value="cpp">C++</option>
                     <option value="csharp">C#</option>
                     <option value="php">PHP</option>
-                    <option value="ruby">Ruby</option>
                     <option value="go">Go</option>
                     <option value="rust">Rust</option>
                 </select>
@@ -68,7 +67,6 @@ const HTML = ({ lang, title, content, ext = {}, tips, isEdit, showPwPrompt }) =>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/ruby/ruby.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/go/go.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/rust/rust.min.js"></script>
 </head>
