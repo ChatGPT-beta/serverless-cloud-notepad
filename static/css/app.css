@@ -358,3 +358,33 @@ textarea:focus {
 .modal-body>input:hover {
     border-color: #3a86ffd4;
 }
+
+.language-select {
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px solid #dcdde1;
+    border-radius: 4px;
+    background: #fff;
+    color: #3a3b3c;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.language-select:focus {
+    outline: none;
+    border-color: #3a86ff;
+}
+
+.CodeMirror {
+    height: calc(100vh - 180px);
+    font-family: Monaco, 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    border: none;
+    background: transparent;
+}
+
+.CodeMirror-gutters {
+    border: none;
+    background: transparent;
+}
